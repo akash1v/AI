@@ -1,53 +1,33 @@
-from Maze import Maze
-class Queue:
-    def __init__(self):
-        self.list = []
+graph = {
+    'B' : ['C', 'N'],
+    'C' : ['A', 'Q'],
+    'A' : ['M'],
+    'Q' : ['R'],
+    'N' : ['S'],
+    'S' : ['T', 'Z'],
+    'M' : [],
+    'R' : [],
+    'T' : [],
+    'Z' : [],
+}
 
-    def push(self, val):
-        self.list.append(val)
-    
-    def pop(self):
-        return self.list.pop(0)
-    
-    def search(self, val):
-        if val in self.list:
-            return True
-        return False
+def BFS(grp, root_key):
+    opened = []
+    closed = []
 
-    def isEmpty(self):
-        if len(self.list) == 0:
-            return True
-        return False
-    
-def BFS(maze):
-    frontier = Queue()
-    explored = []
+    opened.append(root_key)       # root key added
 
-    frontier.push(maze.start)
+    print(f"Open List : {*opened,},        Close List : {*closed,}")
 
-    while True:
-        if frontier.isEmpty():
-            raise Exception("No Solution")
+    while len(opened) != 0:
+        key = opened.pop(0)      
+        nbr = grp[key]            # neighbours of the exploring key
         
-        state = frontier.pop()
+        for i in nbr:
+            if i not in closed and i not in opened:
+                opened.append(i)  
         
-        if state == maze.end:
-            break
-        
-        neighbours = maze.neighbours(state)
-        for nbr in neighbours:
-            if nbr not in explored and not frontier.search(nbr):
-                frontier.push(nbr)
-        
-        explored.append(state)
-    
-    return explored
-        
+        closed.append(key)
+        print(f"Open List : {*opened,},         Close List : {*closed,}")
 
-try :
-    maze = Maze('maze.txt')
-    solution = BFS(maze)
-    print("Solution of maze : ")
-    maze.print(solution)
-except Exception as e:
-    print(e)
+BFS(graph, 'B')
