@@ -1,21 +1,5 @@
 import heapq as hq                                   #heap queue as hq
 
-Graph = {                                            #graph
-    "B": {"C": 7, "N": 8},
-    "C": {"M": 3, "N": 2},
-    "M": {"B": 4, "S": 1},
-    "N": {"M": 3, "S": 5},
-    "S": {},
-}
-
-Heuristic = {                                         #heuristic function
-    "B": 2,
-    "C": 3,
-    "M": 5,
-    "N": 4,
-    "S": 3,
-}
-
 def path_cost(graph, path):
     cost = 0
     if len(path) < 2:
@@ -27,41 +11,47 @@ def path_cost(graph, path):
 
 def astar(graph, heuristic, start, goal):
 
-    opened = [(heuristic[start], [start])]              #priority queue initialized with start node
-    closed = []
+    queue = [(heuristic[start], [start])]              #queue initialized with start node
 
-    while len(opened) != 0:                             #checking whether the queue is empty or not
+    while len(queue) != 0:                             #checking whether the queue is empty or not
 
-        hq.heapify(opened)                              #heapifying queue
+        cost, path = hq.heappop(queue)                 #pop of path with least path cost + heuristic cost
+        key = path[-1]                                 #last node where the path left off
 
-        print("Opened list : ")
-        print(opened)
-        print("Closed list : ")
-        print(closed)
-
-        cost, path = hq.heappop(opened)                 #pop of path with least path cost + heuristic cost
-        key = path[-1]                                  #last node where the path left off
-
-        if key == goal:                                 #goal found
-            print("Optimal Solution is found : ", path," = ", cost)   
-            break
-        else:
-            closed.append((cost, path))
-
+        if key == goal:                                #goal found
+            return cost, path
+        
         for i in graph[key]:                                        #visit all the nodes connected to path
+            
             if i in path :                                          #avoiding deadlocks
                 continue
+            
             new_path = path + [i]                                   #new path
-            new_cost = path_cost(graph, new_path) + heuristic[i]    #calculate cost of the new path
+            new_cost = path_cost(graph, new_path) + heuristic[i]    #cost of the new path
 
-            if new_path not in opened and closed:
-                opened.append((new_cost, new_path))                 #push the new path with its cost
+            if new_path not in queue:
+                hq.heappush(queue, (new_cost, new_path))           #push the new path with its cost
 
-    else:                                                           #no solution found
-        print("Opened list : ")
-        print(opened)
-        print("Closed list : ")
-        print(closed)
-        print("\nNo Solution")                                     
+if __name__ == "__main__":
 
-astar(Graph, Heuristic, "B", "S")
+    Graph = {
+        "A": {"B": 9, "C": 4, "D": 7},
+        "B": {"E": 10},
+        "C": {"E": 17, "F": 12},
+        "D": {"F": 14},
+        "E": {"G": 5},
+        "F": {"G": 9}
+    }
+
+    Heuristic = {
+        "A": 21,
+        "B": 14,
+        "C": 18,
+        "D": 18,
+        "E": 5,
+        "F": 8,
+        "G": 0,
+    }
+
+    cost, path = astar(Graph, Heuristic, "A", "G")
+    print(path, cost)

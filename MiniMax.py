@@ -18,13 +18,11 @@ def minimax(tree, terminal_nodes, node,isMax = True):
 
         #if max evaluate the max value out of all
         #if min evaluate the min value out of all
-        if isMax:                                               
-            val = max(val, temp_val)
-        else :                                                  
-            val = min(val, temp_val)
-
-        #selecting path which consist of optimal value
-        if val == temp_val:                                     
+        if isMax and temp_val > val:                                               
+            val = temp_val
+            path = temp_path
+        elif not isMax and temp_val < val:
+            val = temp_val
             path = temp_path
 
     #adding current node to the path
@@ -32,27 +30,28 @@ def minimax(tree, terminal_nodes, node,isMax = True):
     #returning optimal value with optimal path
     return val, path
 
-terminal_nodes = {
-    'Q': 5,
-    'R': 2,
-    'S': 6,
-    'T': -1,
-    'U': 1,
-    'V': 7,
-    'W': 9,
-    'X': -4,
-}
+if __name__ == "__main__":
+    terminal_nodes = {
+        'Q': 5,
+        'R': 2,
+        'S': 6,
+        'T': -1,
+        'U': 1,
+        'V': 7,
+        'W': 9,
+        'X': -4,
+    }
 
-tree = {
-    'I': ['J', 'K'],
-    'J': ['L', 'M'],
-    'K': ['N', 'O'],
-    'L': ['Q', 'R'],
-    'M': ['S', 'T'],
-    'N': ['U', 'V'],
-    'O': ['W', 'X'],
-}
+    tree = {
+        'I': ['J', 'K'],
+        'J': ['L', 'M'],
+        'K': ['N', 'O'],
+        'L': ['Q', 'R'],
+        'M': ['S', 'T'],
+        'N': ['U', 'V'],
+        'O': ['W', 'X'],
+    }
 
-val, path = minimax(tree, terminal_nodes, 'I')
-print("Optimal Solution : ",val)
-print(path)
+    val, path = minimax(tree, terminal_nodes, 'I')
+    print("Optimal Solution : ",val)
+    print(path)
